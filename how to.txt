@@ -1,0 +1,48 @@
+steps to setup a database again:
+
+1. delete the sqlite file
+2. python manage.py syncdb
+3. python manage.py shell
+4. from summary.models import *
+5. vid = Video()
+vid.name = "steve"
+vid.duration = 61
+vid.prevtime = -1
+vid.save()
+6. vid.initialize()
+7. summary = Summary()
+summary.fullvid = vid
+summary.save()
+
+LAST - quit()
+
+
+STEPS TO START CRON:
+python manage.py installtasks
+crontab -l
+
+domain:
+./ngrok -authtoken 4NfYF8cy74fh0-ln3b9A -subdomain=dennis 8080
+
+
+POSTGRESQL:
+sudo su - postgres
+createdb mydb
+createuser -P
+psql
+GRANT ALL PRIVILEGES ON DATABASE mydb TO myuser;
+  DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': 'mydb',                      # Or path to database file if using sqlite3.
+            # The following settings are not used with sqlite3:
+            'USER': 'myuser',
+            'PASSWORD': 'password',
+            'HOST': 'localhost',                      # Empty for localhost through domain sockets or           '127.0.0.1' for localhost through TCP.
+            'PORT': '',                      # Set to empty string for default.
+        }
+    }
+
+
+
+

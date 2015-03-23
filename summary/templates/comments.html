@@ -1,0 +1,67 @@
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+</head>
+
+<body>
+
+	<div id="comments"></div>
+
+	<script>
+        commentsURL = "http://gdata.youtube.com/feeds/api/videos/{{url}}/comments?v=2&alt=json&max-results=50"
+        startIndex = 0
+		$.ajax({
+   			url: "http://gdata.youtube.com/feeds/api/videos/{{url}}/comments?v=2&alt=json&max-results=50", 
+    		//gets the max first 50 results.  To get the 'next' 50, use &start-index=50
+    		dataType: "jsonp",
+    		success: function(data){
+        		$.each(data.feed.entry, function(key, val) {
+            		comment = $("<div class='comment'></div>");
+            
+            		author = $("<a target='_blank' class='youtube_user'></a>");
+            		author.attr("href", "http://youtube.com/user/" + val.author[0].name.$t);
+           	 		author.html(val.author[0].name.$t);
+            
+            		content = $("<div style='font-size: 14px;' class='content'></div>");
+            		content.html(val.content.$t);
+            		thecomment = val.content.$t;
+            		$.ajax({
+                		type: "POST",
+                		url: "commentajax/",
+                		data: {thecomment: thecomment},
+            		});
+
+            
+            		comment.append(author).append(content);
+            		$('#comments').append(comment);
+        		});
+                if ($(data.feed.entry).size() == 50) { getComments(commentsURL, startIndex + 50); }
+    		}
+		});
+        function getComments(commentsURL, startIndex) {
+            $.ajax({
+                url: commentsURL + '&start-index=' + startIndex,
+                dataType: "jsonp",
+                success: function (data) {
+                    $.each(data.feed.entry, function(key, val) {
+                        comment = $("<div class='comment'></div>");
+            
+                        author = $("<a target='_blank' class='youtube_user'></a>");
+                        author.attr("href", "http://youtube.com/user/" + val.author[0].name.$t);
+                        author.html(val.author[0].name.$t);
+            
+                        content = $("<div style='font-size: 14px;' class='content'></div>");
+                        content.html(val.content.$t);
+                        thecomment = val.content.$t;
+                        $.ajax({
+                            type: "POST",
+                            url: "commentajax/",
+                            data: {thecomment: thecomment},
+                        });
+                    });
+                if ($(data.feed.entry).size() == 50) { getComments(commentsURL, startIndex + 50); }
+                }
+            });
+        }
+	</script>
+
+</body>

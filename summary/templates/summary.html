@@ -1,0 +1,54 @@
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+	<p>{{list}}</p>
+    <div style = "height:550px; width:700px; overflow: hidden;">
+		<div id="player"></div>
+	</div>
+
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '390',
+                width: '640',
+                videoId: '{{url}}',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+        function onPlayerReady(event) {
+            //event.target.playVideo();
+            //this sends info to server every second
+            window.setInterval(function(){
+            	k = parseInt(player.getCurrentTime());
+                {% for i, j in secondslist %}
+				if (k == {{i}}){
+					if ({{j}} != -99){
+						player.seekTo({{j}}, true);
+					}
+					else{
+						player.seekTo(player.getDuration(), true);
+					}
+				}
+				{% endfor %}
+            }, 1000); 
+        }
+        var done = false;
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+            }
+        }
+        function stopVideo() {
+            player.stopVideo();
+        }
+    </script>
+
+</body>
